@@ -1,0 +1,300 @@
+# These are some standard rules common to all Makefiles that build 
+# libraries.
+
+# Turn off implicit rules, they are not needed here.
+MAKEFLAGS = -r
+
+include $(top_srcdir)/configvars
+include $(top_srcdir)/rules
+
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_AR = $(am__v_AR_$(V))
+am__v_AR_ = $(am__v_AR_$(AM_DEFAULT_VERBOSITY))
+am__v_AR_0 = @echo "  AR    " $@;
+AM_V_RANLIB = $(am__v_RANLIB_$(V))
+am__v_RANLIB_ = $(am__v_RANLIB_$(AM_DEFAULT_VERBOSITY))
+am__v_RANLIB_0 = @echo "  RANLIB" $@;
+
+# This is the slow part of the Makefiles.  Exclude it if we build
+# binary distributions.
+ifndef top_distdir
+
+libc := libc$(qualifier).a
+libiio := libiio$(qualifier).a
+librpcsvc := librpcsvc$(qualifier).a
+
+LIBS := $(libc) $(libiio) $(librpcsvc)
+
+ifeq ($(USE_WEAK_SYMBOLS), yes)
+ifdef HAVE_ASM_WEAKEXT_DIRECTIVE
+CFLAGS += -DHAVE_ASM_WEAKEXT_DIRECTIVE
+else
+CFLAGS += -DHAVE_ASM_WEAK_DIRECTIVE
+endif
+endif
+
+DIRSTEM=$(notdir $(<D))
+
+INCLUDES = -nostdinc -I$(<D) -I$(top_srcdir) -I$(top_srcdir)/include \
+-I$(top_srcdir)/mintlib -I$(top_srcdir)/stdlib -I$(shell cat $(top_srcdir)/includepath) 
+DEFS += -DHAVE_CONFIG_H -D_LIBC -D_REENTRANT
+
+COMPILE = $(filter-out $(NOCFLAGS-$(<F)), $(filter-out $(nocflags),\
+$(CC) $(WARN) $(cflags) $(CFLAGS) $(CFLAGS-$(<F)) $(CFLAGS-$(DIRSTEM))) \
+$(INCLUDES) $(DEFS) $(DEFS-$(<F)) $(DEFS-$(DIRSTEM)))
+
+-include $(top_srcdir)/CFILES
+
+argpdir    := $(top_srcdir)/argp
+cryptdir   := $(top_srcdir)/crypt
+direntdir  := $(top_srcdir)/dirent
+gmpdir     := $(top_srcdir)/gmp
+logindir   := $(top_srcdir)/login
+mintlibdir := $(top_srcdir)/mintlib
+miscdir    := $(top_srcdir)/misc
+posixdir   := $(top_srcdir)/posix
+pwdgrpdir  := $(top_srcdir)/pwdgrp
+shadowdir  := $(top_srcdir)/shadow
+signaldir  := $(top_srcdir)/signal
+socketdir  := $(top_srcdir)/socket
+stdiiodir  := $(top_srcdir)/stdiio
+stdiodir   := $(top_srcdir)/stdio
+stdlibdir  := $(top_srcdir)/stdlib
+stringdir  := $(top_srcdir)/string
+sunrpcdir  := $(top_srcdir)/sunrpc
+syscalldir := $(top_srcdir)/syscall
+sysvipcdir := $(top_srcdir)/sysvipc
+termiosdir := $(top_srcdir)/termios
+timedir    := $(top_srcdir)/time
+tzdir      := $(top_srcdir)/tz
+unixdir    := $(top_srcdir)/unix
+srcdirs   := $(argpdir) $(cryptdir) $(direntdir) $(gmpdir) $(logindir) $(mintlibdir) \
+  $(miscdir) $(posixdir) $(pwdgrpdir) $(shadowdir) $(signaldir) $(socketdir) \
+  $(stdiiodir) $(stdiodir) $(stdlibdir) $(stringdir) $(sunrpcdir) \
+  $(syscalldir) $(sysvipcdir) $(termiosdir) $(timedir) $(tzdir) $(unixdir)
+
+ARGPSRCS    := $(addprefix $(argpdir)/,    $(ARGPCFILES))
+CRYPTSRCS   := $(addprefix $(cryptdir)/,   $(CRYPTCFILES))
+DIRENTSRCS  := $(addprefix $(direntdir)/,  $(DIRENTCFILES))
+GMPSRCS     := $(addprefix $(gmpdir)/,     $(GMPCFILES))
+LOGINSRCS   := $(addprefix $(logindir)/,   $(LOGINCFILES))
+MINTLIBSRCS := $(addprefix $(mintlibdir)/, $(MINTLIBCFILES))
+MISCSRCS    := $(addprefix $(miscdir)/,    $(MISCCFILES))
+POSIXSRCS   := $(addprefix $(posixdir)/,   $(POSIXCFILES))
+PWDGRPSRCS  := $(addprefix $(pwdgrpdir)/,  $(PWDGRPCFILES))
+RPCSVCSRCS  := $(addprefix $(sunrpcdir)/,  $(RPCSVCCFILES))
+SHADOWSRCS  := $(addprefix $(shadowdir)/,  $(SHADOWCFILES))
+SIGNALSRCS  := $(addprefix $(signaldir)/,  $(SIGNALCFILES))
+SOCKETSRCS  := $(addprefix $(socketdir)/,  $(SOCKETCFILES))
+STDIIOSRCS  := $(addprefix $(stdiiodir)/,  $(STDIIOCFILES))
+STDIOSRCS   := $(addprefix $(stdiodir)/,   $(STDIOCFILES))
+STDLIBSRCS  := $(addprefix $(stdlibdir)/,  $(STDLIBCFILES))
+STRINGSRCS  := $(addprefix $(stringdir)/,  $(STRINGCFILES))
+SUNRPCSRCS  := $(addprefix $(sunrpcdir)/,  $(SUNRPCCFILES))
+SYSCALLSRCS := $(addprefix $(syscalldir)/, $(SYSCALLCFILES))
+SYSVIPCSRCS := $(addprefix $(sysvipcdir)/, $(SYSVIPCCFILES))
+TERMIOSSRCS := $(addprefix $(termiosdir)/, $(TERMIOSCFILES))
+TIMESRCS    := $(addprefix $(timedir)/,    $(TIMECFILES))
+TZSRCS      := $(addprefix $(tzdir)/,      $(TZCFILES))
+UNIXSRCS    := $(addprefix $(unixdir)/,    $(UNIXCFILES))
+SRCS := $(ARGPSRCS) $(CRYPTSRCS) $(DIRENTSRCS) $(GMPSRCS) $(LOGINSRCS) $(MINTLIBSRCS) \
+  $(MISCSRCS) $(POSIXSRCS) $(PWDGRPSRCS) $(RPCSVCSRCS) $(SHADOWSRCS) \
+  $(SIGNALSRCS) $(SOCKETSRCS) $(STDIOSRCS) $(STDIOSRCS) $(STDLIBSRCS) \
+  $(STRINGSRCS) $(SUNRPCSRCS) $(SYSCALLSRCS) $(SYSVIPCSRCS) $(TERMIOSSRCS) \
+  $(TIMESRCS) $(TZSRCS) $(UNIXSRCS)
+
+ifeq ($(libsize), _p)
+CFLAGS-_mon.S = -DPROFILING
+endif
+NOCFLAGS-crtinit.c = -pg -fomit-frame-pointer
+NOCFLAGS-gmon.c = -pg -fomit-frame-pointer
+NOCFLAGS-mcount.c = -pg -fomit-frame-pointer
+NOCFLAGS-profil-freq.c = -pg -fomit-frame-pointer
+NOCFLAGS-profil-posix.c = -pg -fomit-frame-pointer
+#NOCFLAGS-linea.c = -pg -fomit-frame-pointer -O2 -O
+#DEFS-vfscanf.c = -DNO_BUG_IN_ISO_C_CORRIGENDUM_1
+CFLAGS-localtime.c = -DUSG_COMPAT -DALL_STATE -DPCTS -DSTD_INSPIRED -DNOID -fwrapv
+CFLAGS-asctime.c = -DNOID
+CFLAGS-strftime.c = -DNOID
+CFLAGS-difftime.c = -DNOID
+CFLAGS-nanosleep.c = -fwrapv
+CFLAGS-vfprintf.c = -Wno-uninitialized
+CFLAGS-ivfprintf.c = -Wno-uninitialized
+DEFS-ident.c = -DVERSION=\"$(VERSION)\"
+DEFS-ident_sock.c = -DVERSION=\"$(VERSION)\"
+CFLAGS-crypt = -O3 -fexpensive-optimizations
+# These source come from ... you know where
+DEFS-xbootparam_prot.c = -Wno-unused
+DEFS-xmount.c = -Wno-unused
+DEFS-xrex.c = -Wno-unused
+DEFS-xrusers.c = -Wno-unused
+DEFS-xyppasswd.c = -Wno-unused
+DEFS-xkey_prot.c = -Wno-unused
+DEFS-xnfs_prot.c = -Wno-unused
+DEFS-xrquota.c = -Wno-unused
+DEFS-xsm_inter.c = -Wno-unused
+DEFS-xklm_prot.c = -Wno-unused
+DEFS-xnlm_prot.c= -Wno-unused
+DEFS-xrstat.c = -Wno-unused
+DEFS-xspray.c= -Wno-unused
+
+ARGPOBJS    := $(addsuffix .o, $(basename $(notdir $(ARGPSRCS))))
+CRYPTOBJS   := $(addsuffix .o, $(basename $(notdir $(CRYPTSRCS))))
+DIRENTOBJS  := $(addsuffix .o, $(basename $(notdir $(DIRENTSRCS))))
+GMPOBJS     := $(addsuffix .o, $(basename $(notdir $(GMPSRCS))))
+LOGINOBJS   := $(addsuffix .o, $(basename $(notdir $(LOGINSRCS))))
+MINTLIBOBJS := $(addsuffix .o, $(basename $(notdir $(MINTLIBSRCS))))
+MISCOBJS    := $(addsuffix .o, $(basename $(notdir $(MISCSRCS))))
+POSIXOBJS   := $(addsuffix .o, $(basename $(notdir $(POSIXSRCS))))
+PWDGRPOBJS  := $(addsuffix .o, $(basename $(notdir $(PWDGRPSRCS))))
+RPCSVCOBJS  := $(addsuffix .o, $(basename $(notdir $(RPCSVCSRCS))))
+SHADOWOBJS  := $(addsuffix .o, $(basename $(notdir $(SHADOWSRCS))))
+SIGNALOBJS  := $(addsuffix .o, $(basename $(notdir $(SIGNALSRCS))))
+SOCKETOBJS  := $(addsuffix .o, $(basename $(notdir $(SOCKETSRCS))))
+STDIIOOBJS  := $(addsuffix .o, $(basename $(notdir $(STDIIOSRCS))))
+STDIOOBJS   := $(addsuffix .o, $(basename $(notdir $(STDIOSRCS))))
+STDLIBOBJS  := $(addsuffix .o, $(basename $(notdir $(STDLIBSRCS))))
+STRINGOBJS  := $(addsuffix .o, $(basename $(notdir $(STRINGSRCS))))
+SUNRPCOBJS  := $(addsuffix .o, $(basename $(notdir $(SUNRPCSRCS))))
+SYSCALLOBJS := $(addsuffix .o, $(basename $(notdir $(SYSCALLSRCS))))
+SYSVIPCOBJS := $(addsuffix .o, $(basename $(notdir $(SYSVIPCSRCS))))
+TERMIOSOBJS := $(addsuffix .o, $(basename $(notdir $(TERMIOSSRCS))))
+TIMEOBJS    := $(addsuffix .o, $(basename $(notdir $(TIMESRCS))))
+TZOBJS      := $(addsuffix .o, $(basename $(notdir $(TZSRCS))))
+UNIXOBJS    := $(addsuffix .o, $(basename $(notdir $(UNIXSRCS))))
+OBJS := $(ARGPOBJS) $(CRYPTOBJS) $(DIRENTOBJS) $(GMPOBJS) $(LOGINOBJS) $(MINTLIBOBJS) \
+  $(MISCOBJS) $(POSIXOBJS) $(PWDGRPOBJS) $(RPCSVCOBJS) $(SHADOWOBJS) \
+  $(SIGNALOBJS) $(SOCKETOBJS) $(STDIIOOBJS) $(STDIOOBJS) $(STDLIBOBJS) \
+  $(STRINGOBJS) $(SUNRPCOBJS) $(SYSCALLOBJS) $(SYSVIPCOBJS) $(TERMIOSOBJS) \
+  $(TIMEOBJS) $(TZOBJS) $(UNIXOBJS)
+LIBCOBJS := $(ARGPOBJS) $(CRYPTOBJS) $(DIRENTOBJS) $(GMPOBJS) $(LOGINOBJS) $(MINTLIBOBJS) \
+  $(MISCOBJS) $(POSIXOBJS) $(PWDGRPOBJS) $(SHADOWOBJS) $(SIGNALOBJS) \
+  $(STDIOOBJS) $(STDLIBOBJS) $(STRINGOBJS) $(SYSCALLOBJS) $(SYSVIPCOBJS) \
+  $(TERMIOSOBJS) $(TIMEOBJS) $(TZOBJS) $(UNIXOBJS) $(SUNRPCOBJS) $(SOCKETOBJS)
+
+# All modules that reference vfprintf or vfscanf should be listed here.
+LIBIIO_ADDOBJS = err.o error.o doprnt.o dprintf.o fscanf.o scanf.o vscanf.o \
+vsscanf.o obstream.o printf.o vasprintf.o vdprintf.o vprintf.o vsnprintf.o \
+vsprintf.o 
+
+DEP_FILES := $(addprefix $(top_srcdir)/.deps/,$(patsubst %.o,%.P,$(OBJS)))
+
+# These are automatically remade, no need for make to worry about
+# them.
+.PHONY : $(DEP_FILES)
+
+endif  # not top_distdir.
+
+all-here: $(top_srcdir)/CFILES $(top_srcdir)/includepath $(LIBS)
+
+$(top_srcdir)/includepath: $(top_srcdir)/configvars
+	@echo "Generating $@"; \
+	local= ; \
+	installdir=`$(CC) --print-search-dirs | awk '{ print $$2; exit; }'`; \
+	case $$installdir in /usr/local*) local=/local;; esac; \
+	echo "$${installdir}include -I$${installdir}include-fixed -I/usr$$local/m68k-atari-mint/include" >$@
+	@if [ -z "$$(<$@)" ]; then \
+	  rm $@; \
+	  echo "error: The syntax \$$(<file) is unsupported by $(SHELL)." >&2; \
+	  echo "       Please use \"$(MAKE) SHELL=/bin/bash\" instead." >&2; \
+	  exit 1; \
+	fi
+	
+include $(top_srcdir)/bindist
+
+install-include:
+
+install-man:
+
+uninstall-include:
+
+uninstall-man:
+
+ifndef top_distdir    # Not needed when making distributions.
+
+# Copy SRCFILES from source directory here.
+$(top_srcdir)/CFILES: $(argpdir)/SRCFILES $(cryptdir)/SRCFILES $(direntdir)/SRCFILES \
+  $(gmpdir)/SRCFILES $(logindir)/SRCFILES $(mintlibdir)/SRCFILES \
+  $(miscdir)/SRCFILES $(posixdir)/SRCFILES $(pwdgrpdir)/SRCFILES \
+  $(shadowdir)/SRCFILES $(signaldir)/SRCFILES $(socketdir)/SRCFILES \
+  $(stdiiodir)/SRCFILES $(stdiodir)/SRCFILES $(stdlibdir)/SRCFILES \
+  $(stringdir)/SRCFILES $(sunrpcdir)/SRCFILES $(sunrpcdir)/RPCSVCCFILES \
+  $(syscalldir)/SRCFILES $(sysvipcdir)/SRCFILES $(termiosdir)/SRCFILES \
+  $(timedir)/SRCFILES $(tzdir)/SRCFILES $(unixdir)/SRCFILES
+	rm -f $@
+	echo "# This file is a generated secondary file. Do not edit." >$@
+	sed -e 's,^SRCFILES *=,ARGPCFILES =,g' $(argpdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,CRYPTCFILES =,g' $(cryptdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,DIRENTCFILES =,g' $(direntdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,GMPCFILES =,g' $(gmpdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,LOGINCFILES =,g' $(logindir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,MINTLIBCFILES =,g' $(mintlibdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,MISCCFILES =,g' $(miscdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,POSIXCFILES =,g' $(posixdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,PWDGRPCFILES =,g' $(pwdgrpdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,SHADOWCFILES =,g' $(shadowdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,SIGNALCFILES =,g' $(signaldir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,SOCKETCFILES =,g' $(socketdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,STDIIOCFILES =,g' $(stdiiodir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,STDIOCFILES =,g' $(stdiodir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,STDLIBCFILES =,g' $(stdlibdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,STRINGCFILES =,g' $(stringdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,SUNRPCCFILES =,g' $(sunrpcdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,RPCSVCCFILES =,g' $(sunrpcdir)/RPCSVCCFILES >> $@
+	sed -e 's,^SRCFILES *=,RPCGENCFILES =,g' $(sunrpcdir)/RPCGENCFILES >> $@
+	sed -e 's,^SRCFILES *=,RPCINFOCFILES =,g' $(sunrpcdir)/RPCINFOCFILES >> $@
+	sed -e 's,^SRCFILES *=,SYSCALLCFILES =,g' $(syscalldir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,SYSVIPCCFILES =,g' $(sysvipcdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,TERMIOSCFILES =,g' $(termiosdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,TIMECFILES =,g' $(timedir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,TZCFILES =,g' $(tzdir)/SRCFILES >>$@
+	sed -e 's,^SRCFILES *=,UNIXCFILES =,g' $(unixdir)/SRCFILES >>$@
+
+vpath %.c $(srcdirs)
+vpath %.s $(srcdirs)
+vpath %.S $(srcdirs)
+
+.SUFFIXES:
+.SUFFIXES: .c .o .S .s
+
+.c.o:
+	$(AM_V_CC)$(COMPILE) -Wp,-MD,$(top_srcdir)/.deps/$(@:.o=.P) -c $< -o $@
+			
+.S.o:
+	$(AM_V_CC)$(COMPILE) -Wp,-MD,$(top_srcdir)/.deps/$(@:.o=.P) -c $< -o $@
+			
+.s.o:
+	$(AM_V_CC)$(COMPILE) -Wp,-MD,$(top_srcdir)/.deps/$(@:.o=.P) -c $< -o $@
+				
+# Finally, build the libs.
+$(libc): $(LIBCOBJS)
+	@rm -f $@
+	$(AM_V_AR)$(AR) cru $@ $(LIBCOBJS)
+	$(AM_V_RANLIB)$(RANLIB) $@
+
+$(libiio): $(STDIIOOBJS) $(LIBIIO_ADDOBJS)
+	@rm -f $@
+	$(AM_V_AR)$(AR) cru $@ $(STDIIOOBJS) $(LIBIIO_ADDOBJS)
+	$(AM_V_RANLIB)$(RANLIB) $@
+
+$(librpcsvc): $(RPCSVCOBJS)
+	@rm -f $@
+	$(AM_V_AR)$(AR) cru $@ $(RPCSVCOBJS)
+	$(AM_V_RANLIB)$(RANLIB) $@
+	
+$(top_srcdir)/include/linker.h: $(top_srcdir)/include/linker.h.in \
+  $(top_srcdir)/configvars
+	(cd $(top_srcdir)/include && $(MAKE) linker.h)
+
+DEPS_MAGIC := $(shell mkdir $(top_srcdir)/.deps > /dev/null 2>&1 || :)
+
+.SECONDARY : $(DEP_FILES) $(SRCFILES)
+
+-include $(DEP_FILES) /dev/null
+
+endif   # not top_distdir.
+
+include $(top_srcdir)/phony
+

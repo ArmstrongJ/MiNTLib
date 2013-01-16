@@ -1,0 +1,33 @@
+# This file gets included by the Makefile in this directory to determine
+# the files that should go only into source distributions.
+# The files listed here are sorted in alphanumerical order.  This is
+# necessary but if it keeps like this the files are also compiled in
+# alphabetical order.
+
+SRCFILES = \
+	daemon.c \
+	diraccess.c \
+	dirname.c \
+	efgcvt.c \
+	efgcvt_r.c \
+	err.c \
+	error.c \
+	getdirname.c \
+	getpass.c \
+	getusershell.c \
+	group_member.c \
+	hsearch.c \
+	hsearch_r.c \
+	insremque.c \
+	lsearch.c \
+	mkstemp.c \
+	mktemp.c \
+	mntent.c \
+	mntent_r.c \
+	obstack.c \
+	qefgcvt.c \
+	qefgcvt_r.c \
+	sa_len.c \
+	setmode.c \
+	syslog.c \
+	tsearch.c

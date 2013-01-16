@@ -1,0 +1,93 @@
+# These are some standard rules common to all subdirectory Makefiles.
+
+include $(srcdir)/BINFILES
+include $(srcdir)/SRCFILES
+include $(srcdir)/EXTRAFILES
+include $(srcdir)/MISCFILES
+-include $(srcdir)/RPCSVCCFILES
+-include $(srcdir)/RPCGENCFILES
+-include $(srcdir)/RPCINFOCFILES
+
+mkinstalldirs = $(top_srcdir)/mkinstalldirs
+MOVEIFCHANGE = $(top_srcdir)/move-if-change
+
+all: all-here all-recursive
+
+bakclean:
+	rm -f *~ *# *.BAK *.bak
+	rm -f *.orig *.rej
+
+clean:
+	rm -f *.o lib*.a *.tmp
+	rm -f core report nohup.out errlog
+	rm -f foobar foo bar baz junk schrott muell
+	rm -rf .deps 
+
+install: all-here install-include install-lib install-man \
+install-recursive
+
+uninstall: uninstall-recursive uninstall-include uninstall-lib uninstall-man
+
+ifdef dont_install_libs
+install-lib:
+
+else
+
+baselibs = $(basename $(LIBS))
+
+install-lib:
+	$(mkinstalldirs) $(libdir)/$(instdir)
+	@list='$(LIBS)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo " $(INSTALL) -m 644 $$p $(libdir)/$(instdir)"; \
+	    $(INSTALL) -m 644 $$p $(libdir)/$(instdir); \
+	  else :; fi; \
+	done
+
+uninstall-lib:
+	list='$(baselibs)'; for p in $$list; do \
+	  r=$$p.a; \
+	  s="$$p"$(libsize).a; \
+	  echo " rm -f $(libdir)/$(instdir)/$$r $(libdir)/$(instdir)/$$s"; \
+	  rm -f $(libdir)/$(instdir)/$$r $(libdir)/$(instdir)/$$s; \
+	done
+endif
+
+check: check-recursive
+
+DISTFILES = $(MISCFILES) $(SRCFILES) $(RPCSVCCFILES) $(RPCGENSRCFILES) $(RPCINFOSRCFILES)
+
+distdir = $(top_builddir)/MiNTLib-$(VERSION)/$(subdir)
+
+distdir: $(DISTFILES) distdir-local
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  test -d $$d/$$file \
+	  || test -f $(distdir)/$$file \
+	  || ln $$d/$$file $(distdir)/$$file 2>/dev/null \
+	  || cp -p $$d/$$file $(distdir)/$$file \
+	  || exit 1; \
+	done
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  test -d $(distdir)/$$subdir \
+	  || mkdir $(distdir)/$$subdir \
+	  || exit 1; \
+	  chmod 777 $(distdir)/$$subdir; \
+	  (cd $$subdir && $(MAKE) top_distdir=../$(distdir) distdir=../$(distdir)/$$subdir distdir) \
+	    || exit 1; \
+	done
+
+distdir-local:
+
+all-recursive clean-recursive bakclean-recursive check-recursive \
+install-recursive uninstall-recursive install-lib-recursive \
+install-include-recursive install-man-recursive uninstall-lib-recursive \
+uninstall-include-recursive uninstall-man-recursive dist-recursive:
+	@set fnord $(MAKEFLAGS); amf=$$2; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  target=`echo $@ | sed s/-recursive//`; \
+	  echo "Making $$target in $$subdir"; \
+	  (cd $$subdir && $(MAKE) -r $$target) \
+	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done && test -z "$$fail"
+

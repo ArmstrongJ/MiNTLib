@@ -1,0 +1,33 @@
+# This file gets included by the Makefile in this directory to determine
+# the files that should go both into binary and source distributions.
+# $Id: MISCFILES,v 1.12 2010/01/26 09:18:40 alanh Exp $
+
+MISCFILES = MISCFILES \
+	\
+	basepage.h \
+	cdromio.h \
+	cookie.h \
+	dcntl.h \
+	errno.h \
+	falcon.h \
+	iflink.h \
+	linea.h \
+	metados.h \
+	mintbind.h \
+	mouse.h \
+	net.h \
+	nfs.h \
+	osbind.h \
+	ostruct.h \
+	ptrace.h \
+	random.h \
+	screen.h \
+	slb.h \
+	ssystem.h \
+	sysbind.h \
+	sysctl.h \
+	sysvars.h \
+	trap1.h \
+	trap13.h \
+	trap14.h \
+	xbra.h
