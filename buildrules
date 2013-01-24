@@ -83,7 +83,7 @@ GMPSRCS     := $(addprefix $(gmpdir)/,     $(GMPCFILES))
 LOGINSRCS   := $(addprefix $(logindir)/,   $(LOGINCFILES))
 MINTLIBSRCS := $(addprefix $(mintlibdir)/, $(MINTLIBCFILES))
 MISCSRCS    := $(addprefix $(miscdir)/,    $(MISCCFILES))
-MBYTESRCS   := $(addprefix $(mbytedir)/,   $(MULTIBYTECFILES))
+MBYTESRCS   := $(addprefix $(mbytedir)/,   $(MBYTECFILES))
 POSIXSRCS   := $(addprefix $(posixdir)/,   $(POSIXCFILES))
 PWDGRPSRCS  := $(addprefix $(pwdgrpdir)/,  $(PWDGRPCFILES))
 RPCSVCSRCS  := $(addprefix $(sunrpcdir)/,  $(RPCSVCCFILES))
@@ -102,7 +102,7 @@ TIMESRCS    := $(addprefix $(timedir)/,    $(TIMECFILES))
 TZSRCS      := $(addprefix $(tzdir)/,      $(TZCFILES))
 UNIXSRCS    := $(addprefix $(unixdir)/,    $(UNIXCFILES))
 SRCS := $(ARGPSRCS) $(CRYPTSRCS) $(DIRENTSRCS) $(GMPSRCS) $(LOGINSRCS) $(MINTLIBSRCS) \
-  $(MISCSRCS) $(MULTIBYTECFILES) $(POSIXSRCS) $(PWDGRPSRCS) $(RPCSVCSRCS) $(SHADOWSRCS) \
+  $(MISCSRCS) $(MBYTESRCS) $(POSIXSRCS) $(PWDGRPSRCS) $(RPCSVCSRCS) $(SHADOWSRCS) \
   $(SIGNALSRCS) $(SOCKETSRCS) $(STDIOSRCS) $(STDIOSRCS) $(STDLIBSRCS) \
   $(STRINGSRCS) $(SUNRPCSRCS) $(SYSCALLSRCS) $(SYSVIPCSRCS) $(TERMIOSSRCS) \
   $(TIMESRCS) $(TZSRCS) $(UNIXSRCS)
@@ -219,8 +219,8 @@ ifndef top_distdir    # Not needed when making distributions.
 
 # Copy SRCFILES from source directory here.
 $(top_srcdir)/CFILES: $(argpdir)/SRCFILES $(cryptdir)/SRCFILES $(direntdir)/SRCFILES \
-  $(gmpdir)/SRCFILES $(logindir)/SRCFILES $(mintlibdir)/SRCFILES \
-  $(miscdir)/SRCFILES $(posixdir)/SRCFILES $(pwdgrpdir)/SRCFILES \
+  $(gmpdir)/SRCFILES $(mbytedir)/SRCFILES $(logindir)/SRCFILES $(mintlibdir)/SRCFILES \
+  $(miscdir)/SRCFILES $($(posixdir)/SRCFILES $(pwdgrpdir)/SRCFILES \
   $(shadowdir)/SRCFILES $(signaldir)/SRCFILES $(socketdir)/SRCFILES \
   $(stdiiodir)/SRCFILES $(stdiodir)/SRCFILES $(stdlibdir)/SRCFILES \
   $(stringdir)/SRCFILES $(sunrpcdir)/SRCFILES $(sunrpcdir)/RPCSVCCFILES \
