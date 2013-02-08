@@ -26,6 +26,7 @@ SRCFILES = \
 	raise.c \
 	regex.c \
 	remove.c \
+	sched_yield.c \
 	sleep.c \
 	sysconf.c \
 	system.c \
