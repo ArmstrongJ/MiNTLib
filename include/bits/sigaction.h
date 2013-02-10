@@ -29,6 +29,10 @@
 #define SIG_SETMASK	2
 
 #define SA_NOCLDSTOP   0x0001       /* don't send SIGCHLD when they stop */
+#define SA_NOCLDWAIT   0x0002       /* don't create zombie on child death */
+
+#define SA_RESTART     0x1000       /* restart syscall on signal return */
+#define SA_NODEFER     0x4000       /* don't block signal while handler runs */
 #define SA_RESETHAND   0x8000       /* Reset to SIG_DFL on entry to handler. */
 
 struct sigaction {

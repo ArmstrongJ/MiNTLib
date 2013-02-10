@@ -97,7 +97,7 @@ __profil (u_short *sample_buffer, size_t size, size_t offset, u_int scale)
   pc_scale = scale;
 
   act.sa_handler = (sighandler_t) &profil_counter;
-  act.sa_flags = 0; //SA_RESTART;
+  act.sa_flags = SA_RESTART;
   sigfillset (&act.sa_mask);
   if (__sigaction (SIGPROF, &act, &oact) < 0)
     return -1;
