@@ -35,6 +35,7 @@ MISCFILES = 00README COPYMINT COPYING COPYING.LIB MISCFILES \
 	ieee754.h \
 	inttypes.h \
 	iovec.h \
+	langinfo.h \
 	lastlog.h \
 	libgen.h \
 	limits.h \

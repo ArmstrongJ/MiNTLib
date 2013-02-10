@@ -64,6 +64,7 @@ SRCFILES = \
 	malloc.c \
 	mcount.c \
 	modf.S \
+	nl_langinfo.c \
 	profil-freq.c \
 	profil-posix.c \
 	pselect.c \
