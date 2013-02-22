@@ -131,7 +131,7 @@ struct exception
 extern const double _infinitydf;	/* in normdf.cpp */
 
 
-#if defined(__GNUC_INLINE__) && defined(__GNUC__) && (__GNUC__ > 4)  && \
+#if defined(__GNUC_INLINE__) && defined(__GNUC__) && (__GNUC__ >= 4)  && \
     (!defined(NO_INLINE_MATH)) && (defined(_M68881) || defined(__M68881__))
 #  define _INLINE_MATH 1
 #else
